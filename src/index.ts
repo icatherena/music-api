@@ -49,6 +49,31 @@ app.post(`/artist`, async (req, res) => {
   res.json(result)
 })
 
+// Update an existing artist
+app.put('/artist/:artist_id', async (req, res) => {
+  const artist_id = Number(req.params.artist_id)
+  const artist = await prisma.artist.update({
+    where: { 
+      id: artist_id
+    },
+    data: {
+      ...req.body
+    }
+  })
+  res.json(artist)
+})
+
+// Delete an existing artist
+app.delete(`/artist/:artist_id`, async (req, res) => {
+  const artist_id = Number(req.params.artist_id)
+  const artist = await prisma.artist.delete({
+    where: {
+      id: artist_id
+    },
+  })
+  res.json(artist)
+})
+
 // Retrieve all released music from any artist
 app.get(`/post/`, async (req, res) => {
   const posts = await prisma.post.findMany({
@@ -67,7 +92,11 @@ app.get(`/post/:post_id`, async (req, res) => {
       id: post_id 
     },
     include: { 
-      theme: {}
+      theme: {
+        orderBy: {
+          index: 'asc'
+        }
+      }
     },
   })
   res.json(post)
@@ -81,11 +110,73 @@ app.post(`/post`, async (req, res) => {
   res.json(result)
 })
 
+// Update a release
+app.put(`/post/:post_id`, async (req, res) => {
+  const post_id = Number(req.params.post_id)
+  const post = await prisma.post.update({
+    where: {
+      id: post_id
+    },
+    data: {
+      ...req.body
+    }
+  })
+  res.json(post)
+})
+
+// Delete post by ID 
+app.delete(`/post/:post_id`, async (req, res) => {
+  const post_id = Number(req.params.post_id)
+  const post = await prisma.post.delete({
+    where: {
+      id: post_id
+    },
+  })
+  res.json(post)
+})
+
+// Retrieve a theme' song by its ID
+app.get(`/theme/:theme_id`, async (req, res) => {
+  const theme_id = Number(req.params.theme_id)
+  const theme = await prisma.theme.findUnique({
+    where: {
+      id: theme_id
+    },
+  })
+  res.json(theme)
+})
+
+// Create a theme' song
 app.post(`/theme`, async (req, res) => {
   const result = await prisma.theme.create({ 
     data: { ...req.body },
   })
   res.json(result)
+})
+
+// Update a theme' song by its ID
+app.put(`/theme/:theme_id`, async (req, res) => {
+  const theme_id = Number(req.params.theme_id)
+  const theme = await prisma.theme.update({
+    where: {
+      id: theme_id
+    },
+    data: {
+      ...req.body
+    }
+  })
+  res.json(theme)
+})
+
+// Delete a theme by its id
+app.delete(`/theme/:theme_id`, async (req, res) => {
+  const theme_id = Number(req.params.theme_id)
+  const theme = await prisma.theme.delete({
+    where: {
+      id: theme_id
+    },
+  })
+  res.json(theme)
 })
 
 app.listen(port, () =>
