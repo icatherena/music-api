@@ -133,12 +133,17 @@ postRouter.put(`/:post_id`, async (req, res) => {
 postRouter.delete(`/:post_id`, async (req, res) => {
   try {  
     const post_id = Number(req.params.post_id)
+    
+    const deleteThemes = await prisma.theme.deleteMany({
+      where: { post_id: post_id }
+    })
+
     const post = await prisma.post.delete({
       where: {
         id: post_id
-      },
+      }
     })
-    res.json(post)
+    res.json({post, deleteThemes})
   } catch (error) {
     return res.status(500).json({ error: 'Internal Server Error. Failed to delete the artist' })
   }

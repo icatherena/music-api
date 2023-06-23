@@ -56,53 +56,14 @@ artistRouter.get(`/:artist_id`, async (req, res, next) => {
   } else {
     next();
   }
-} catch {
-  // Handle 500 (Internal Server Error) error
-  res.status(500).json({ error: 'Internal Server Error' });
-}}, async (req, res) => {
-  const artist_id = Number(req.params.artist_id); 
-  const artist = await prisma.artist.findUnique({
-    where: { 
-      id: artist_id 
-    },
-    include: { 
-      post: {
-        orderBy: {
-          post_date: 'desc',
-        },
-        select: {
-          id: true,
-          type: true,
-          name: true,
-          post_date: true,
-        }
-      }
-    },
-  });
   res.json(artist)
+  } catch {
+    // Handle 500 (Internal Server Error) error
+    res.status(500).json({ error: 'Internal Server Error' });
+  } 
 });
 
-// The first async function is responsible for checking 
-// if the artist_id exists in the database. It performs a 
-// database query using prisma.artist.findUnique() to 
-// find the artist with the given artist_id.
-
-// The second async function is responsible for 
-// handling the response and sending the artist data 
-// as a JSON response
-
-// ------------------------------------------------------
-
 // Create a new artist
-/* app.post('/artist', async (req, res) => {
-  const { name } = req.body.name
-  const result = await prisma.artist.create({
-    data: { 
-      name,
-    },
-  })
-  res.json(result)
-}) */
 
 artistRouter.post(`/`, async (req, res) => {
   const { name } = req.body
